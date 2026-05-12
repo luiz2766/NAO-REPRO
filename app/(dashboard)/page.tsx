@@ -274,7 +274,31 @@ export default function DashboardPage() {
                     activeDot={{ r: 6, strokeWidth: 0, fill: '#3b82f6' }}
                     animationDuration={1500}
                     animationEasing="ease-in-out"
-                  />
+                  >
+                    <LabelList 
+                      dataKey="valor" 
+                      position="top" 
+                      offset={12} 
+                      content={(props: any) => {
+                        const { x, y, value } = props;
+                        if (value === undefined || value === null || value === 0) return null;
+                        return (
+                          <text 
+                            x={x} 
+                            y={y} 
+                            dy={-6} 
+                            fill="#3b82f6" 
+                            fontSize={9} 
+                            fontWeight="800" 
+                            textAnchor="middle"
+                            className="drop-shadow-sm"
+                          >
+                            {`R$${(value/1000).toFixed(1)}k`}
+                          </text>
+                        );
+                      }}
+                    />
+                  </Area>
                 </AreaChart>
               </ResponsiveContainer>
             </div>
