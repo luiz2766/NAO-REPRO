@@ -468,17 +468,24 @@ export default function PrioridadesPage() {
             </div>
           </div>
 
-          <div className="bg-slate-900 rounded-[32px] p-8 text-white">
-             <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-slate-800 rounded-lg">
-                  <AlertCircle size={20} className="text-amber-400" />
+          <div className="bg-white border border-slate-200 rounded-[32px] p-8 shadow-sm overflow-hidden relative group transition-all duration-300 hover:border-blue-200">
+             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-500"></div>
+             
+             <div className="relative z-10">
+                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl w-fit mb-6">
+                  <Clock size={24} />
                 </div>
-                <h4 className="font-bold text-sm tracking-tight text-slate-100">Dica Operacional</h4>
+                <h4 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-1">Prioridades Pendentes</h4>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-5xl font-black text-slate-900 tracking-tighter">
+                    {prioridades.length}
+                  </span>
+                  <span className="text-sm font-bold text-slate-400">Registros</span>
+                </div>
+                <p className="text-[11px] text-slate-500 font-medium mt-4 leading-relaxed">
+                  Total de clientes aguardando atendimento preferencial na próxima roteirização.
+                </p>
              </div>
-             <p className="text-xs text-slate-400 leading-relaxed font-medium">
-               A lista de prioridades sincroniza automaticamente com o roteirizador. 
-               Clientes marcados aqui serão destacados na próxima importação de pedidos.
-             </p>
           </div>
         </div>
 
