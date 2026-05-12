@@ -43,17 +43,28 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Records must be an array" }, { status: 400 });
       }
 
+      // Verificar se temos a chave de admin para o upsert (que costuma ser bloqueado por RLS)
+      const isUsingServiceKey = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+      
       // Upsert na tabela clientes_base
       const { error } = await client
         .from('clientes_base')
         .upsert(records, { onConflict: 'codigo_cliente' });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message?.includes('violates row-level security policy') && !isUsingServiceKey) {
+          return NextResponse.json({ 
+            error: "Erro de Permissão (RLS). A 'SUPABASE_SERVICE_ROLE_KEY' não foi configurada nas configurações do app. Para importar em massa, você precisa configurar esta chave ou desabilitar o RLS para esta tabela no Supabase.",
+            details: error
+          }, { status: 403 });
+        }
+        throw error;
+      }
       return NextResponse.json({ success: true, count: records.length });
     }
 
     // Se for adicionar um cliente individual à prioridade
-    const { codigo_cliente, sigla, razao_social, vendedor } = body;
+    const { codigo_cliente, sigla, razao_social, vendedor, numero_pedido } = body;
 
     const { data, error } = await client
       .from('clientes_prioridade')
@@ -63,6 +74,7 @@ export async function POST(req: NextRequest) {
           sigla,
           razao_social,
           vendedor,
+          numero_pedido,
           data_inclusao: new Date().toISOString()
         }
       ])
@@ -80,8 +92,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(data);
   } catch (error: any) {
     console.error("Prioridade Action Error:", error);
-    // Extraímos a mensagem de forma mais robusta
-    const errorMessage = error.message || (typeof error === 'string' ? error : JSON.stringify(error));
+    
+    // Formatar erro de forma a ser legível no frontend
+    let errorMessage = "Erro interno no servidor";
+    if (error.message) {
+      errorMessage = error.message;
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+    } else if (error.error_description) {
+      errorMessage = error.error_description;
+    } else {
+      try {
+        errorMessage = JSON.stringify(error);
+      } catch (e) {
+        errorMessage = "Erro desconhecido";
+      }
+    }
+
     return NextResponse.json({ 
       error: errorMessage,
       details: error.details || null,

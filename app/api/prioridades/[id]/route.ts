@@ -14,27 +14,37 @@ export async function DELETE(
     const { id } = await params;
     console.log(`Attempting to delete priority with ID: ${id}`);
 
-    // Try to parse as number if it's a bigint identity
+    // Attempt deletion with both string and numeric formats
     const numericId = parseInt(id);
-    const deleteQuery = client.from('clientes_prioridade').delete();
+    const query = client.from('clientes_prioridade').delete();
     
+    let result;
     if (!isNaN(numericId)) {
-      deleteQuery.or(`id.eq.${numericId},id.eq.${id}`);
+      result = await query.or(`id.eq.${numericId},id.eq.${id}`).select();
     } else {
-      deleteQuery.eq('id', id);
+      result = await query.eq('id', id).select();
     }
-
-    const { error, count } = await deleteQuery;
+    
+    const { data, error } = result;
 
     if (error) {
       console.error("Supabase Delete Error:", error);
       throw error;
     }
 
-    console.log(`Delete successful. Count: ${count}`);
-    return NextResponse.json({ success: true, count });
+    const deletedCount = data?.length || 0;
+    console.log(`Delete operation complete. Rows deleted: ${deletedCount}`);
+    
+    return NextResponse.json({ 
+      success: true, 
+      count: deletedCount,
+      message: deletedCount > 0 ? "Registro excluído" : "Nenhum registro encontrado com este ID"
+    });
   } catch (error: any) {
     console.error("Delete Prioridade Error:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ 
+      error: error.message || "Erro ao excluir registro",
+      details: error 
+    }, { status: 500 });
   }
 }
