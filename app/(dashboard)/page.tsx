@@ -181,7 +181,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <KPICard 
           title="Total de Pedidos" 
           value={resumo?.totalPedidos?.toLocaleString() || 0} 
@@ -210,6 +210,40 @@ export default function DashboardPage() {
           description="CIDADES ATENDIDAS"
           color="indigo"
         />
+
+        {/* Card de Médias Diárias */}
+        <div className="overflow-hidden border border-slate-200 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1 bg-gradient-to-br from-slate-50 to-white rounded-2xl group flex flex-col">
+          <div className="flex flex-row items-center justify-between space-y-0 p-6 pb-2">
+            <h3 className="text-[11px] font-bold uppercase tracking-widest text-slate-500">Médias Diárias</h3>
+            <div className="p-2 rounded-xl transition-colors bg-slate-100 text-slate-600">
+               <TrendingUp size={18} strokeWidth={2.5} />
+            </div>
+          </div>
+          <div className="p-6 pt-0 flex-1 flex flex-col justify-center">
+            <div className="mb-4">
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pedidos / Dia</p>
+              <div className="text-3xl font-bold tracking-tight text-slate-900">
+                {resumo?.totalPedidos ? (resumo.totalPedidos / (dataData.length || 3)).toFixed(1) : 0}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 gap-3 pt-4 border-t border-slate-100">
+              <div>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Faturamento Médio</p>
+                <p className="text-sm font-bold text-emerald-600">
+                  R${resumo?.valorTotal ? ((resumo.valorTotal / (dataData.length || 3)) / 1000).toFixed(1) : 0}k
+                </p>
+              </div>
+              <div>
+                <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Volume Médio</p>
+                <p className="text-sm font-bold text-amber-600">
+                  {resumo?.pesoTotal ? ((resumo.pesoTotal / (dataData.length || 3)) / 1000).toFixed(1) : 0}T
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="h-1 w-full opacity-50 bg-slate-200" />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
