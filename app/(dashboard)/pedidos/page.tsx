@@ -228,7 +228,7 @@ export default function PedidosPage() {
           <div className="relative w-full md:w-96">
              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} strokeWidth={2.5} />
              <Input 
-               placeholder="Buscar por código de cliente..." 
+               placeholder="Buscar por código ou razão social..." 
                className="pl-11 h-12 border-slate-200 bg-white rounded-xl font-medium focus-visible:ring-blue-500 focus-visible:border-blue-500 shadow-sm transition-all"
                value={search}
                onChange={(e) => setSearch(e.target.value)}

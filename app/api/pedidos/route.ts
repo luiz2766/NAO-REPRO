@@ -37,7 +37,9 @@ export async function GET(req: NextRequest) {
 
     if (cidade) query = query.ilike('cidade', `%${cidade}%`);
     if (bairro) query = query.ilike('bairro', `%${bairro}%`);
-    if (codCliente) query = query.ilike('cod_cliente', `%${codCliente}%`);
+    if (codCliente) {
+      query = query.or(`cod_cliente.ilike.%${codCliente}%,razao_social.ilike.%${codCliente}%`);
+    }
     if (dataPedido) query = query.eq('data_pedido', dataPedido);
 
     const from = (page - 1) * limit;
